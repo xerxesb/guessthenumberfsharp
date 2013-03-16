@@ -20,38 +20,24 @@ let getGuess () =
     stdin.ReadLine() |> int
 
 
-let (|GuessType|_|) (guess :int) (actual : int) =
-    if (guess < actual) then Some Low
-    elif (guess > actual) then Some High
-    else Some Equal
+let (|GuessType|) (guess :int) (actual : int) =
+    if (guess < actual) then Low
+    elif (guess > actual) then High
+    else Equal
  
 
-let getDesc guess actual =
-    match actual with
-    | GuessType guess Low -> printfn "Too low!" |> ignore
-    | GuessType guess High -> printfn "Too high!" |> ignore
-    | GuessType guess Equal -> printfn "Correct!" |> ignore
-    | _ -> ()
+let getDesc guess actual : string =
+    match actual with // complains that pattern match is incomplete. needs match on _. Not sure what to return then, tho.
+    | GuessType guess Low -> "Too low!"
+    | GuessType guess High -> "Too high!"
+    | GuessType guess Equal -> "Correct!"
 
-
-(*
-//example of parameterized active pattern
-let (|MultipleOf|_|) (multiplicand : int) (n : int) =
-    Some (n / multiplicand, n % multiplicand)
-
-
-let mult (n : int) (x :int) =
-    match n with
-    | MultipleOf x (_,0) -> printfn "%A is multiple of %A" n x
-    | MultipleOf x (m,_) -> printfn "%A is not multiple of %A" n x
-    | _ -> ()
-*)
 
 let rec runGame game =
     if (game.GuessedNumber = game.ActualNumber) then game
     else
         let nextIter = { game with GuessedNumber = getGuess (); NumberOfGuesses = game.NumberOfGuesses + 1 }
-        getDesc nextIter.GuessedNumber nextIter.ActualNumber
+        getDesc nextIter.GuessedNumber nextIter.ActualNumber |> stdout.WriteLine |> ignore  // why cant i printfn here instead?
         runGame nextIter 
 
 
