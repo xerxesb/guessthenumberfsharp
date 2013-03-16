@@ -9,29 +9,21 @@ type Game = {
     NumberOfGuesses : int
 }
 
-type Guess =
-    | Low
-    | Equal
-    | High
-
-
 let getGuess () =
     stdout.Write "Guess the number: "
     stdin.ReadLine() |> int
 
 
-let (|GuessType|) (guess :int) (actual : int) =
+let (|Low|High|Equal|) (guess :int, actual : int) =
     if (guess < actual) then Low
     elif (guess > actual) then High
     else Equal
- 
 
 let getDesc guess actual : string =
-    match actual with // complains that pattern match is incomplete. needs match on _. Not sure what to return then, tho.
-    | GuessType guess Low -> "Too low!"
-    | GuessType guess High -> "Too high!"
-    | GuessType guess Equal -> "Correct!"
-
+    match (guess,actual) with
+    | Low -> "Too low!"
+    | High -> "Too high!"
+    | Equal -> "Correct!"
 
 let rec runGame game =
     if (game.GuessedNumber = game.ActualNumber) then game
